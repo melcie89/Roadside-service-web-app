@@ -44,6 +44,13 @@ document.getElementById("accountCreationForm").addEventListener("submit", functi
       const userData = { name, email };
       localStorage.setItem("userAccount", JSON.stringify(userData));
   
+      // Replace google.maps.Marker with google.maps.marker.AdvancedMarkerElement
+const marker = new google.maps.marker.AdvancedMarkerElement({
+  map: map,
+  position: location,
+});
+
+
       // Clear form
       this.reset();
     }
