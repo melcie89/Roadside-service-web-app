@@ -10,10 +10,10 @@
 </head>
 <body>
   <header>
-       <!-- Custom Logo -->
-       <div class="logo-container">
-        <img src="C:\Users\13862\Desktop\html.account\logo.png" alt="Roadside Assistance Logo" class="logo">
-      </div>
+    <!-- Custom Logo -->
+    <div class="logo-container">
+      <img src="C:\Users\ryana\OneDrive\Desktop\VS Code\logo.png" alt="Roadside Assistance Logo" class="logo">
+    </div>
     <h1>Create Your Account</h1>
     <nav>
       <ul>
@@ -29,39 +29,41 @@
       <form id="accountCreationForm">
         <label for="name">Full Name:</label>
         <input type="text" id="name" name="name" placeholder="Your name" required>
+        
         <label for="email">Email Address:</label>
         <input type="email" id="email" name="email" placeholder="Your email" required>
+        
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" placeholder="Choose a password" required>
+        
         <label for="confirmPassword">Confirm Password:</label>
         <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required>
+        
+        <label for="role">Select Role:</label>
+        <select id="role" name="role" required>
+          <option value="user">User</option>
+          <option value="serviceProvider">Service Provider</option>
+        </select>
+
+        <!-- Service Provider Fields (will display if serviceProvider is selected) -->
+        <div id="serviceProviderFields" style="display: none;">
+          <label for="serviceArea">Service Area:</label>
+          <input type="text" id="serviceArea" name="serviceArea" placeholder="Where do you provide services?" required>
+          
+          <label for="experience">Experience:</label>
+          <textarea id="experience" name="experience" placeholder="Describe your experience" required></textarea>
+        </div>
+
         <button type="submit">Sign Up</button>
       </form>
     </section>
     <section id="map-section">
       <h2>Locate Us on the Map</h2>
-      <!-- Map container -->
       <div id="map" style="width: 100%; height: 400px;"></div>
     </section>
   </main>
   <footer>
     <p>&copy; 2025 Roadside Assistance. All rights reserved.</p>
   </footer>
-  <script>
-    // Initialize Google Map
-    function initMap() {
-      const location = { lat: 32.9096, lng: -117.2432 }; 
-      const map = new google.maps.Map(document.getElementById("map"), {
-        zoom: 10,
-        center: location,
-      });
-      const marker = new google.maps.Marker({
-        position: location,
-        map: map,
-      });
-    }
-    // Load map after the window has loaded
-    window.onload = initMap;
-  </script>
 </body>
 </html>
