@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Request Service</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <header>
+    <h1>Request Roadside Service</h1>
+    <nav>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="service-request.html">Request Service</a></li>
+        <li><a href="account.html">Account</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main>
+    <section id="request-form">
+      <h2>Service Request Form</h2>
+      <form id="serviceRequestForm">
+        <label for="serviceType">Service Type:</label>
+        <select id="serviceType" name="serviceType">
+          <option value="towing">Towing</option>
+          <option value="flat-tire">Flat Tire Repair</option>
+          <option value="battery">Battery Jump-Start</option>
+          <option value="lockout">Lockout Assistance</option>
+        </select>
+        <label for="location">Your Location:</label>
+        <input type="text" id="location" name="location" placeholder="Enter your location" required>
+        <label for="description">Additional Details:</label>
+        <textarea id="description" name="description" placeholder="Describe the issue"></textarea>
+        <button type="submit">Request Service</button>
+      </form>
+    </section>
+    <section id="map">
+      <h2>Your Location</h2>
+      <div id="mapContainer">Map loading...</div>
+    </section>
+  </main>
+  <footer>
+    <p>&copy; 2025 Roadside Assistance. All rights reserved.</p>
+  </footer>
+</body>
+</html>
