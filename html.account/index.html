@@ -9,30 +9,84 @@
 </head>
 <body>
   <header>
-    <h1>Roadside Assistance</h1>
+    <div class="logo-container">
+      <img src="C:\Users\ryana\OneDrive\Desktop\VS Code\logo.png" alt="Roadside Assistance Logo" class="logo">
+    </div>
+    <h1>Welcome to Roadside Assistance</h1>
     <nav>
-      <ul>
-        <li><a href="index.html">Home</a></li>
+      <ul class="nav-bar">
+        <li><a href="index.html" class="active">Home</a></li>
         <li><a href="service-request.html">Request Service</a></li>
         <li><a href="account.html">Account</a></li>
       </ul>
     </nav>
   </header>
+
   <main>
-    <section id="about">
-      <h2>Welcome to Roadside Assistance</h2>
-      <p>Stuck on the road? We've got you covered. Request roadside services like towing, flat tire repair, or jump-starts anytime, anywhere.</p>
+    <section id="intro">
+      <h2>Your Trusted Roadside Assistance Partner</h2>
+      <p>
+        Whether you’re stranded on the highway or need a quick jumpstart, we’ve got you covered! 
+        Roadside Assistance offers fast, reliable, and professional services to get you back on the road.
+      </p>
+      <a href="service-request.html" class="cta-button">Request a Service</a>
     </section>
-    <section id="services">
+
+    <section id="featured-services">
       <h2>Our Services</h2>
-      <ul>
-        <li>Towing Service</li>
-        <li>Flat Tire Repair</li>
-        <li>Battery Jump-Start</li>
-        <li>Lockout Assistance</li>
-      </ul>
+      <div class="service-list">
+        <div class="service-item">
+          <h3>Towing</h3>
+          <p>We offer professional towing services for all types of vehicles, from cars to trucks.</p>
+        </div>
+        <div class="service-item">
+          <h3>Flat Tire Repair</h3>
+          <p>Quick tire replacement or repair to get you back on your way in no time!</p>
+        </div>
+        <div class="service-item">
+          <h3>Battery Jumpstart</h3>
+          <p>We’ll give your battery the boost it needs to get your engine running again.</p>
+        </div>
+        <div class="service-item">
+          <h3>Fuel Delivery</h3>
+          <p>Ran out of gas? We’ll bring you the fuel you need to get to the nearest station.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="customer-testimonials">
+      <h2>What Our Customers Say</h2>
+      <div class="testimonial">
+        <p>"Fast and reliable! They came to my rescue in under 20 minutes when my car broke down!"</p>
+        <p><strong>- Sarah L.</strong></p>
+      </div>
+      <div class="testimonial">
+        <p>"Great service! The team was friendly, and they fixed my flat tire on the spot!"</p>
+        <p><strong>- Mark T.</strong></p>
+      </div>
+      <div class="testimonial">
+        <p>"I never thought I’d need roadside assistance, but when I did, they were right there!"</p>
+        <p><strong>- Jessica R.</strong></p>
+      </div>
+    </section>
+
+    <section id="intro-video">
+      <h2>Watch Our Service in Action</h2>
+      <div class="video-container">
+        <iframe width="560" height="315" src="https://www.youtube.com/ahaakbdajbad" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+    </section>
+
+    <section id="get-started">
+      <h2>Get Started Today</h2>
+      <p>
+        <a href="service-request.html" class="cta-button">Request a Service</a>
+        or 
+        <a href="account.html" class="cta-button">Create an Account</a> to manage your services!
+      </p>
     </section>
   </main>
+
   <footer>
     <p>&copy; 2025 Roadside Assistance. All rights reserved.</p>
   </footer>
