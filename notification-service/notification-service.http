@@ -1,6 +1,36 @@
-@notification_service_HostAddress = http://localhost:5139
+@baseUrl = http://localhost:5000
 
-GET {{notification_service_HostAddress}}/health/
-Accept: application/json
+### Create a new notification
+POST {{baseUrl}}/api/notifications
+Content-Type: application/json
 
-###
+{
+  "userId": "user123",
+  "message": "New notification message",
+  "type": "INFO",
+  "priority": "MEDIUM"
+}
+
+### Get notification by ID
+GET {{baseUrl}}/api/notifications/3fa85f64-5717-4562-b3fc-2c963f66afa6
+
+### Get user notifications (all)
+GET {{baseUrl}}/api/notifications/user/user123
+
+### Get user notifications (unread only)
+GET {{baseUrl}}/api/notifications/user/user123?unreadOnly=true
+
+### Update notification status
+PUT {{baseUrl}}/api/notifications/status
+Content-Type: application/json
+
+{
+  "notificationId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "isRead": true
+}
+
+### Delete notification
+DELETE {{baseUrl}}/api/notifications/3fa85f64-5717-4562-b3fc-2c963f66afa6
+
+### Variables for response handling
+@notificationId = 3fa85f64-5717-4562-b3fc-2c963f66afa6
