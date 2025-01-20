@@ -3,62 +3,54 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Create an Account</title>
+  <title>Request Service</title>
   <link rel="stylesheet" href="styles.css">
   <script src="script.js" defer></script>
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCUJueD5IgQqhwqUmEwk5sjAz6iZ0EKtss&callback=initMap" loading="lazy" defer></script>
 </head>
 <body>
   <header>
-    <!-- Custom Logo -->
     <div class="logo-container">
       <img src="C:\Users\ryana\OneDrive\Desktop\VS Code\logo.png" alt="Roadside Assistance Logo" class="logo">
     </div>
-    <h1>Create Your Account</h1>
+    <h1>Request Service</h1>
     <nav>
       <ul>
         <li><a href="index.html">Home</a></li>
-        <li><a href="service-request.html">Request Service</a></li>
+        <li><a href="service-request.html" class="active">Request Service</a></li>
         <li><a href="account.html">Account</a></li>
       </ul>
     </nav>
   </header>
   <main>
-    <section id="account-form">
-      <h2>Sign Up</h2>
-      <form id="accountCreationForm">
-        <label for="name">Full Name:</label>
-        <input type="text" id="name" name="name" placeholder="Your name" required>
+    <section id="service-request-form">
+      <h2>Request Assistance</h2>
+      <form id="serviceRequestForm">
+        <label for="customerName">Full Name:</label>
+        <input type="text" id="customerName" name="customerName" placeholder="Your name" required>
         
-        <label for="email">Email Address:</label>
-        <input type="email" id="email" name="email" placeholder="Your email" required>
+        <label for="customerEmail">Email Address:</label>
+        <input type="email" id="customerEmail" name="customerEmail" placeholder="Your email" required>
         
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" placeholder="Choose a password" required>
-        
-        <label for="confirmPassword">Confirm Password:</label>
-        <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required>
-        
-        <label for="role">Select Role:</label>
-        <select id="role" name="role" required>
-          <option value="user">User</option>
-          <option value="serviceProvider">Service Provider</option>
+        <label for="serviceType">Type of Service Needed:</label>
+        <select id="serviceType" name="serviceType" required>
+          <option value="towing">Towing</option>
+          <option value="batteryJumpstart">Battery Jumpstart</option>
+          <option value="flatTire">Flat Tire Repair</option>
+          <option value="fuelDelivery">Fuel Delivery</option>
         </select>
 
-        <!-- Service Provider Fields (will display if serviceProvider is selected) -->
-        <div id="serviceProviderFields" style="display: none;">
-          <label for="serviceArea">Service Area:</label>
-          <input type="text" id="serviceArea" name="serviceArea" placeholder="Where do you provide services?" required>
-          
-          <label for="experience">Experience:</label>
-          <textarea id="experience" name="experience" placeholder="Describe your experience" required></textarea>
-        </div>
+        <label for="serviceLocation">Service Location:</label>
+        <input type="text" id="serviceLocation" name="serviceLocation" placeholder="Enter the location" required>
 
-        <button type="submit">Sign Up</button>
+        <label for="additionalDetails">Additional Details:</label>
+        <textarea id="additionalDetails" name="additionalDetails" placeholder="Provide any additional information"></textarea>
+
+        <button type="submit">Request Service</button>
       </form>
     </section>
-    <section id="map-section">
-      <h2>Locate Us on the Map</h2>
+    <section id="service-map-section">
+      <h2>Locate Your Service Area</h2>
       <div id="map" style="width: 100%; height: 400px;"></div>
     </section>
   </main>
