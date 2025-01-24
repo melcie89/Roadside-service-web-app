@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,6 +9,23 @@
   <script src="script.js" defer></script>
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCUJueD5IgQqhwqUmEwk5sjAz6iZ0EKtss&callback=initMap" loading="lazy" defer></script>
 </head>
+
+<div id="live-chat">
+  <div class="chat-header">
+    <h4>Live Chat</h4>
+    <button id="close-chat">&times;</button>
+  </div>
+  <div class="chat-messages">
+    <div class="message">Hi! How can we assist you today?</div>
+  </div>
+  <div class="chat-input">
+    <input type="text" id="chat-input-box" placeholder="Type your message..." />
+    <button id="send-message">Send</button>
+  </div>
+</div>
+
+
+
 <body>
   <header>
     <div class="logo-container">
