@@ -47,13 +47,14 @@
         </select>
 
         <!-- Service Provider Fields (will display if serviceProvider is selected) -->
-        <div id="serviceProviderFields" style="display: none;">
-          <label for="serviceArea">Service Area:</label>
-          <input type="text" id="serviceArea" name="serviceArea" placeholder="Where do you provide services?" required>
-          
-          <label for="experience">Experience:</label>
-          <textarea id="experience" name="experience" placeholder="Describe your experience" required></textarea>
-        </div>
+        <!-- Experience field no longer has 'required' -->
+<div id="serviceProviderFields" style="display: none;">
+  <label for="serviceArea">Service Area:</label>
+  <input type="text" id="serviceArea" name="serviceArea" placeholder="Where do you provide services?">
+  
+  <label for="experience">Experience:</label>
+  <textarea id="experience" name="experience" placeholder="Describe your experience"></textarea>
+</div>
 
         <button type="submit">Sign Up</button>
       </form>
