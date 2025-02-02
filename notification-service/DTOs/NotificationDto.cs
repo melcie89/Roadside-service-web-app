@@ -14,7 +14,7 @@ public record CreateNotificationDto
 
 public record NotificationResponseDto
 {
-    public Guid Id { get; init; }
+    public string Id { get; init; }
     public string Title { get; init; }
     public string Message { get; init; }
     public NotificationType Type { get; init; }

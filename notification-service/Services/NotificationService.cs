@@ -26,7 +26,7 @@ public class NotificationService : INotificationService
             {
                 var notification = new Notification
                 {
-                    Id = Guid.NewGuid(),
+                    Id = Guid.NewGuid().ToString(),
                     UserId = notificationDto.UserId,
                     Title = notificationDto.Title,
                     Message = notificationDto.Message,
@@ -42,16 +42,16 @@ public class NotificationService : INotificationService
                 // Send push notification
                 try
                 {
-                    await _sender.SendPushNotificationAsync(created);
-                    created.Status = NotificationStatus.Sent;
-                    created.SentAt = DateTime.UtcNow;
-                    await _repository.UpdateAsync(created);
+                    //await _sender.SendPushNotificationAsync(notification);
+                    //created.Status = NotificationStatus.Sent;
+                    //created.SentAt = DateTime.UtcNow;
+                    //await _repository.UpdateAsync(created);
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Failed to send push notification for notification ID: {NotificationId}", created.Id);
-                    created.Status = NotificationStatus.Failed;
-                    await _repository.UpdateAsync(created);
+                    //_logger.LogError(ex, "Failed to send push notification for notification ID: {NotificationId}", created.Id);
+                    //created.Status = NotificationStatus.Failed;
+                    //await _repository.UpdateAsync(created);
                 }
 
                 return MapToResponseDto(created);

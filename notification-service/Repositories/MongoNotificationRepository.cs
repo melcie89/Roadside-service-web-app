@@ -19,7 +19,7 @@ public class MongoNotificationRepository : INotificationRepository
 
     public async Task<Notification> CreateAsync(Notification notification)
     {
-        notification.Id = Guid.NewGuid();
+        notification.Id = Guid.NewGuid().ToString();
         notification.CreatedAt = DateTime.UtcNow;
         await _notifications.InsertOneAsync(notification);
         return notification;
@@ -27,7 +27,7 @@ public class MongoNotificationRepository : INotificationRepository
 
     public async Task<Notification> GetByIdAsync(Guid id)
     {
-        var filter = Builders<Notification>.Filter.Eq(n => n.Id, id);
+        var filter = Builders<Notification>.Filter.Eq(n => n.Id, id.ToString());
         return await _notifications.Find(filter).FirstOrDefaultAsync();
     }
 
@@ -56,7 +56,7 @@ public class MongoNotificationRepository : INotificationRepository
 
     public async Task<bool> DeleteAsync(Guid id)
     {
-        var filter = Builders<Notification>.Filter.Eq(n => n.Id, id);
+        var filter = Builders<Notification>.Filter.Eq(n => n.Id, id.ToString());
         var result = await _notifications.DeleteOneAsync(filter);
         return result.DeletedCount > 0;
     }
