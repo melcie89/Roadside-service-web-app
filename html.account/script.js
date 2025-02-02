@@ -3,27 +3,24 @@ let map;
 let marker;
 let geocoder;
 
-
 function initMap() {
   map = new google.maps.Map(document.getElementById("map"), {
-    center: { lat: 37.7749, lng: -122.4194 }, 
+    center: { lat: 37.7749, lng: -122.4194 },
     zoom: 12,
   });
 
   geocoder = new google.maps.Geocoder();
 
   google.maps.event.addListener(map, "click", function (event) {
-    if (marker) marker.setMap(null); 
+    if (marker) marker.setMap(null);
     marker = new google.maps.Marker({
       position: event.latLng,
       map: map,
     });
 
-   
     document.getElementById("location").value = `${event.latLng.lat()},${event.latLng.lng()}`;
   });
 }
-
 
 document.addEventListener("DOMContentLoaded", function () {
 
@@ -62,7 +59,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const chatInput = document.getElementById("chat-input");
   const sendChatButton = document.getElementById("send-chat");
 
-  sendChatButton.addEventListener("click", function () {
+  sendChatButton.addEventListener("click", async function () {
     const message = chatInput.value.trim();
     if (message) {
       // Display the message in chat history
@@ -75,6 +72,29 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Scroll to the bottom of the chat
       chatHistory.scrollTop = chatHistory.scrollHeight;
+
+      // Send the chat message to the Heroku live chat API
+      const chatData = {
+        message: message,
+        timestamp: new Date().toISOString(), // Optional timestamp for message
+      };
+
+      try {
+        const response = await fetch("https://roadside-assistance-api-27dbc3c52c31.herokuapp.com/api/v1/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(chatData),
+        });
+
+        if (response.ok) {
+          console.log("Message sent to live chat API!");
+        } else {
+          throw new Error("Failed to send message to live chat API");
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        alert("Error sending message to the server.");
+      }
     }
   });
 
@@ -87,7 +107,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value;
     const confirmPassword = document.getElementById("confirmPassword").value;
-    //const role = document.getElementById("role").value;
 
     let errorMessage = "";
 
@@ -101,13 +120,8 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
-    const userData = { firstName, lastName, email, password, role };
+    const userData = { firstName, lastName, email, password };
 
-   /* if (role === "serviceProvider") {
-      userData.serviceArea = document.getElementById("serviceArea").value;
-      userData.experience = document.getElementById("experience").value;
-    }
-*/
     try {
       const response = await fetch("https://roadside-assistance-api-27dbc3c52c31.herokuapp.com/api/v1/auth/register", {
         method: "POST",
