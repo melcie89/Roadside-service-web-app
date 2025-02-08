@@ -1,20 +1,90 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
-const UserSchema = new mongoose.Schema(
-{
-    email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
-    firstName: { type: String, required: true },
-    lastName: { type: String, required: true },
-    role: { type: String, default: 'USER' },
-}, { timestamps: true });
+// Define the schema
+const userSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: [true, 'Name is required'],
+    trim: true,
+  },
+  email: {
+    type: String,
+    required: [true, 'Email is required'],
+    unique: true,
+    lowercase: true,
+    match: [
+      /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
+      'Please provide a valid email address',
+    ],
+  },
+  password: {
+    type: String,
+    required: [true, 'Password is required'],
+    minlength: [6, 'Password must be at least 6 characters long'],
+  },
+  role: {
+    type: String,
+    enum: ['Driver', 'Mechanic', 'Admin'],
+    default: 'Driver',
+  },
+  emergencyContacts: [
+    {
+      name: { type: String, trim: true },
+      phone: { type: String, match: /^\+?[1-9]\d{1,14}$/, trim: true },
+    },
+  ],
+  serviceHistory: [
+    {
+      serviceId: { type: mongoose.Schema.Types.ObjectId, ref: 'Service' },
+      requestedAt: { type: Date, default: Date.now },
+      status: { type: String, enum: ['Pending', 'Completed', 'Cancelled'] },
+    },
+  ],
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
 
-// Password hashing before saving
-UserSchema.pre('save', async function (next) {
+// Pre-save hook for hashing passwords
+userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
-  this.password = await bcrypt.hash(this.password, 10);
+  try {
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Instance method to validate passwords
+userSchema.methods.isValidPassword = async function (password) {
+  return bcrypt.compare(password, this.password);
+};
+
+// Instance method to generate JWT
+userSchema.methods.generateAuthToken = function () {
+  const payload = { id: this._id, role: this.role };
+  const token = jwt.sign(payload, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRES_IN || '1h',
+  });
+  return token;
+};
+
+// Middleware to update the updatedAt field
+userSchema.pre('findOneAndUpdate', function (next) {
+  this._update.updatedAt = Date.now();
   next();
 });
 
-module.exports = mongoose.model('User', UserSchema);
+// Create the model
+const User = mongoose.model('User', userSchema);
+
+module.exports = User;
