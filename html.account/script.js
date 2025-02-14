@@ -1,9 +1,8 @@
 // Initialize the Google Map
-let map;
-let marker;
-let geocoder;
+let map, marker, geocoder;
 
-function initMap() {
+// Make initMap globally available
+window.initMap = function () {
   map = new google.maps.Map(document.getElementById("map"), {
     center: { lat: 37.7749, lng: -122.4194 },
     zoom: 12,
@@ -20,151 +19,148 @@ function initMap() {
 
     document.getElementById("location").value = `${event.latLng.lat()},${event.latLng.lng()}`;
   });
-}
+};
 
 document.addEventListener("DOMContentLoaded", function () {
 
-  // Service Request Form Submission
-  document.getElementById("serviceRequestForm").addEventListener("submit", async function (event) {
+  async function handleFormSubmit(event, url, requestData, successMessage) {
     event.preventDefault();
-
-    const firstName = document.getElementById("firstName").value.trim();
-    const lastName = document.getElementById("lastName").value.trim();
-    const serviceType = document.getElementById("serviceType").value;
-    const location = document.getElementById("location").value.trim();
-
-    if (!firstName || !lastName || !serviceType || !location) {
-      alert("All fields are required.");
-      return;
-    }
-
-    const requestData = { firstName, lastName, serviceType, location };
-
     try {
-      const response = await fetch("https://roadside-assistance-api-27dbc3c52c31.herokuapp.com/api/v1/service/request", {
+      const response = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(requestData)
+        body: JSON.stringify(requestData),
       });
-      const result = await response.json();
-      alert("Service request submitted successfully!");
+
+      if (!response.ok) {
+        const result = await response.json();
+        alert(`Error: ${result.message || "Request failed"}`);
+        return;
+      }
+
+      alert(successMessage);
     } catch (error) {
       console.error("Error:", error);
-      alert("Error submitting service request.");
+      alert("An error occurred. Please try again.");
     }
-  });
+  }
 
-  // Live Chat functionality
-  const chatHistory = document.getElementById("chat-history");
-  const chatInput = document.getElementById("chat-input");
-  const sendChatButton = document.getElementById("send-chat");
-
-  sendChatButton.addEventListener("click", async function () {
-    const message = chatInput.value.trim();
-    if (message) {
-      // Display the message in chat history
-      const chatMessage = document.createElement("div");
-      chatMessage.textContent = message;
-      chatHistory.appendChild(chatMessage);
-
-      // Clear the input
-      chatInput.value = "";
-
-      // Scroll to the bottom of the chat
-      chatHistory.scrollTop = chatHistory.scrollHeight;
-
-      // Send the chat message to the Heroku live chat API
-      const chatData = {
-        message: message,
-        timestamp: new Date().toISOString(), // Optional timestamp for message
+  /**
+   * Service Request Form Submission
+   */
+  const serviceRequestForm = document.getElementById("serviceRequestForm");
+  if (serviceRequestForm) {
+    serviceRequestForm.addEventListener("submit", function (event) {
+      const requestData = {
+        firstName: document.getElementById("firstName").value.trim(),
+        lastName: document.getElementById("lastName").value.trim(),
+        serviceType: document.getElementById("serviceType").value,
+        location: document.getElementById("location").value.trim(),
       };
 
-      try {
-        const response = await fetch("https://roadside-assistance-api-27dbc3c52c31.herokuapp.com/api/v1/chat", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(chatData),
-        });
-
-        if (response.ok) {
-          console.log("Message sent to live chat API!");
-        } else {
-          throw new Error("Failed to send message to live chat API");
-        }
-      } catch (error) {
-        console.error("Error:", error);
-        alert("Error sending message to the server.");
+      if (Object.values(requestData).some((val) => !val)) {
+        alert("All fields are required.");
+        return;
       }
-    }
-  });
 
-  // Account Creation Form
-  document.getElementById("accountCreationForm").addEventListener("submit", async function (event) {
-    event.preventDefault();
+      handleFormSubmit(
+        event,
+        "https://roadside-assistance-api-27dbc3c52c31.herokuapp.com/api/v1/service/request",
+        requestData,
+        "Service request submitted successfully!"
+      );
+    });
+  }
 
-    const firstName = document.getElementById("firstName").value.trim();
-    const lastName = document.getElementById("lastName").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value;
-    const confirmPassword = document.getElementById("confirmPassword").value;
+  /**
+ * Account Creation Form Submission
+ */
+const accountCreationForm = document.getElementById("accountCreationForm");
+if (accountCreationForm) {
+  accountCreationForm.addEventListener("submit", function (event) {
+    // Update the requestData to match the new format
+    const requestData = {
+      name: document.getElementById("firstName").value.trim() + " " + document.getElementById("lastName").value.trim(), // Combine first and last name
+      email: document.getElementById("email").value.trim(),
+      password: document.getElementById("password").value,
+      role: "Admin", // Static role value, can be updated if dynamic
+    };
 
-    let errorMessage = "";
+    let errors = [];
+    if (!requestData.name) errors.push("Name is required.");
+    if (!requestData.email) errors.push("Email is required.");
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(requestData.email)) errors.push("Invalid email format.");
+    if (requestData.password.length < 8) errors.push("Password must be at least 8 characters long.");
 
-    if (!firstName || !lastName) errorMessage += "First and last name are required.\n";
-    if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) errorMessage += "Invalid email format.\n";
-    if (password.length < 8) errorMessage += "Password must be at least 8 characters long.\n";
-    if (password !== confirmPassword) errorMessage += "Passwords do not match.\n";
-
-    if (errorMessage) {
-      alert("Form errors:\n" + errorMessage);
+    if (errors.length) {
+      alert(errors.join("\n"));
       return;
     }
 
-    const userData = { firstName, lastName, email, password };
-
-    try {
-      const response = await fetch("https://roadside-assistance-api-27dbc3c52c31.herokuapp.com/api/v1/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(userData)
-      });
-      const result = await response.json();
-      alert("Account created successfully!");
-    } catch (error) {
-      console.error("Error:", error);
-      alert("Error creating account.");
-    }
+    handleFormSubmit(
+      event,
+      "https://roadside-assistance-api-27dbc3c52c31.herokuapp.com/api/v1/auth/register",
+      requestData,
+      "Account created successfully!"
+    );
   });
+}
 
-  // Contact Us Form
-  document.getElementById("contactUsForm").addEventListener("submit", async function (event) {
-    event.preventDefault();
 
-    const firstName = document.getElementById("firstName").value.trim();
-    const lastName = document.getElementById("lastName").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const subject = document.getElementById("subject").value.trim();
-    const message = document.getElementById("message").value.trim();
+  /**
+   * Login Form Submission
+   */
+  const loginForm = document.getElementById("loginForm");
+  if (loginForm) {
+    loginForm.addEventListener("submit", function (event) {
+      const requestData = {
+        email: document.getElementById("email").value.trim(),
+        password: document.getElementById("password").value,
+      };
 
-    if (!firstName || !lastName || !email || !subject || !message) {
-      alert("All fields are required.");
-      return;
-    }
+      if (!requestData.email || !requestData.password) {
+        alert("Both email and password are required.");
+        return;
+      }
 
-    const contactData = { firstName, lastName, email, subject, message };
-
-    try {
-      const response = await fetch("https://roadside-assistance-api-27dbc3c52c31.herokuapp.com/api/v1/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(contactData)
+      handleFormSubmit(
+        event,
+        "https://roadside-assistance-api-27dbc3c52c31.herokuapp.com/api/v1/auth/login",
+        requestData,
+        "Login successful! Redirecting..."
+      ).then(() => {
+        localStorage.setItem("accessToken", requestData.accessToken);
+        localStorage.setItem("refreshToken", requestData.refreshToken);
+        window.location.href = "/dashboard";
       });
-      const result = await response.json();
-      alert("Message sent successfully!");
-    } catch (error) {
-      console.error("Error:", error);
-      alert("Error sending message.");
-    }
-  });
+    });
+  }
 
+  /**
+   * Contact Us Form Submission
+   */
+  const contactUsForm = document.getElementById("contactUsForm");
+  if (contactUsForm) {
+    contactUsForm.addEventListener("submit", function (event) {
+      const requestData = {
+        firstName: document.getElementById("firstName").value.trim(),
+        lastName: document.getElementById("lastName").value.trim(),
+        email: document.getElementById("email").value.trim(),
+        subject: document.getElementById("subject").value.trim(),
+        message: document.getElementById("message").value.trim(),
+      };
+
+      if (Object.values(requestData).some((val) => !val)) {
+        alert("All fields are required.");
+        return;
+      }
+
+      handleFormSubmit(
+        event,
+        "https://roadside-assistance-api-27dbc3c52c31.herokuapp.com/api/v1/contact",
+        requestData,
+        "Message sent successfully!"
+      );
+    });
+  }
 });
