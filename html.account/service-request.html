@@ -6,12 +6,13 @@
   <title>Request Service</title>
   <link rel="stylesheet" href="styles.css">
   <script src="script.js" defer></script>
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCUJueD5IgQqhwqUmEwk5sjAz6iZ0EKtss&callback=initMap" async></script> <!-- Google Maps API -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCUJueD5IgQqhwqUmEwk5sjAz6iZ0EKtss&callback=initMap" async defer></script>
+  <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
 </head>
 <body>
   <header>
     <div class="logo-container">
-      <img src="C:\Users\ryana\OneDrive\Desktop\VS Code\logo.png" alt="Roadside Assistance Logo" class="logo">
+      <img src="logo.png" alt="Roadside Assistance Logo" class="logo">
     </div>
     <h1>Request Service</h1>
     <nav>
@@ -19,6 +20,7 @@
         <li><a href="index.html">Home</a></li>
         <li><a href="service-request.html" class="active">Request Service</a></li>
         <li><a href="account.html">Account</a></li>
+        <li><a href="login.html" class="active">Login</a></li>
         <li><a href="contact.html">Contact Us</a></li>
       </ul>
     </nav>
@@ -65,5 +67,39 @@
   <footer>
     <p>&copy; 2025 Roadside Assistance. All rights reserved.</p>
   </footer>
+
+  <!-- Live Chat with WebSocket Script -->
+  <script>
+    // Live Chat with WebSocket
+    document.addEventListener("DOMContentLoaded", function () {
+      const socket = io("https://roadside-assistance-api-27dbc3c52c31.herokuapp.com", {
+        auth: { token: localStorage.getItem("accessToken") },
+      });
+
+      const chatHistory = document.getElementById("chat-history");
+      const chatInput = document.getElementById("chat-input");
+      const sendChatButton = document.getElementById("send-chat");
+
+      if (sendChatButton && chatHistory && chatInput) {
+        sendChatButton.addEventListener("click", function () {
+          const message = chatInput.value.trim();
+          if (message) {
+            socket.emit("send_message", { roomId: "general", sender: "User", message });
+
+            const chatMessage = document.createElement("div");
+            chatMessage.textContent = `You: ${message}`;
+            chatHistory.appendChild(chatMessage);
+            chatInput.value = "";
+          }
+        });
+
+        socket.on("receive_message", (data) => {
+          const chatMessage = document.createElement("div");
+          chatMessage.textContent = `${data.sender}: ${data.message}`;
+          chatHistory.appendChild(chatMessage);
+        });
+      }
+    });
+  </script>
 </body>
 </html>
