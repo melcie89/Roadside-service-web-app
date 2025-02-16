@@ -2,9 +2,21 @@ const express = require('express');
 const app = express();
 require('dotenv').config(); // Load environment variables
 const mongoose = require('mongoose');
-
+const cors = require('cors');
 // Middleware
-// app.use(cors());
+const allowedOrigins = ['http://127.0.0.1:5500', 'http://localhost:8000'];
+
+const options = {
+  origin: function (origin, callback) {
+    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+};
+
+app.use(cors(options));
 app.use(express.json());
 
 // Connect to MongoDB
