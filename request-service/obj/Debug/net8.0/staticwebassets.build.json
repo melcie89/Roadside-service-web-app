@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "h81KyAEVwcVwa52/Y+BgfCoTdUeNdp6dBxRm8Tu8ErU=",
+  "Source": "request-service",
+  "BasePath": "_content/request-service",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}
