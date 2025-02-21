@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-const API_URL = import.meta.env.VITE_API_URL;
+
+const API_URL = import.meta.env.VITE_API_URL;  // Fetch from .env file
 
 function Account() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     password: '',
-    role: 'user', // default to 'user'
+    role: 'Admin', // default to 'user'
   });
 
   const handleChange = (e) => {
@@ -26,7 +27,7 @@ function Account() {
 
     try {
       // Send the form data to the backend API
-      const response = await fetch('http://localhost:8000/api/auth/register', {
+      const response = await fetch(`${API_URL}/api/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -38,15 +39,17 @@ function Account() {
         // Success - handle the response
         const data = await response.json();
         console.log('Account created:', data);
-        // You can redirect or show a success message here
+      
       } else {
         // Handle error
         console.error('Account creation failed');
         const errorData = await response.json();
         console.error('Error:', errorData);
+        console.error('Status:', response.status);
+        console.error('StatusText:', response.statusText);
       }
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Network error:', error);
     }
   };
 
@@ -55,13 +58,31 @@ function Account() {
       <h2>Create an Account</h2>
       <form onSubmit={handleSubmit}>
         <label>Name:</label>
-        <input type="text" name="name" value={formData.name} onChange={handleChange} required />
+        <input
+          type="text"
+          name="name"
+          value={formData.name}
+          onChange={handleChange}
+          required
+        />
 
         <label>Email:</label>
-        <input type="email" name="email" value={formData.email} onChange={handleChange} required />
+        <input
+          type="email"
+          name="email"
+          value={formData.email}
+          onChange={handleChange}
+          required
+        />
 
         <label>Password:</label>
-        <input type="password" name="password" value={formData.password} onChange={handleChange} required />
+        <input
+          type="password"
+          name="password"
+          value={formData.password}
+          onChange={handleChange}
+          required
+        />
 
         <label>Role:</label>
         <select name="role" value={formData.role} onChange={handleChange}>

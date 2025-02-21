@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { io } from "socket.io-client";
 import axios from "axios";
-import { v4 as uuidv4 } from "uuid"; // Import UUID generator
+import { v4 as uuidv4 } from "uuid";
 
-// Load Google Maps API only once with the 'async' attribute and prevent multiple script loads
+// Load Google Maps API only once
 const loadGoogleMapsScript = (callback) => {
   const scriptSrc = `https://maps.googleapis.com/maps/api/js?key=AIzaSyCUJueD5IgQqhwqUmEwk5sjAz6iZ0EKtss&callback=${callback}`;
 
@@ -17,26 +16,14 @@ const loadGoogleMapsScript = (callback) => {
 };
 
 const ServiceRequest = () => {
-  const [messages, setMessages] = useState([]);
-  const [input, setInput] = useState("");
   const [location, setLocation] = useState("");
-  const [map, setMap] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [map, setMap] = useState(null);
 
-  const socket = io("http://localhost:8000");
-
-  // Initialize the Google Map
+  // Initialize Google Map
   useEffect(() => {
     loadGoogleMapsScript("initMap");
     window.initMap = initMap;
-
-    socket.on("receive_message", (data) => {
-      setMessages((prev) => [...prev, data]);
-    });
-
-    return () => {
-      socket.off("receive_message");
-    };
   }, []);
 
   const initMap = () => {
@@ -45,7 +32,6 @@ const ServiceRequest = () => {
       zoom: 12,
     });
 
-    // Use google.maps.Marker as fallback if AdvancedMarkerElement isn't available
     const marker = new window.google.maps.Marker({
       position: mapInstance.getCenter(),
       map: mapInstance,
@@ -64,8 +50,14 @@ const ServiceRequest = () => {
     e.preventDefault();
     setIsLoading(true);
 
+    if (!location) {
+      alert("Please select a location on the map.");
+      setIsLoading(false);
+      return;
+    }
+
     const formData = {
-      customerId: uuidv4(), // Generate a unique UUID dynamically
+      customerId: uuidv4(),
       serviceType: e.target.serviceType.value,
       location,
     };

@@ -99,7 +99,7 @@ if (accountCreationForm) {
 
     handleFormSubmit(
       event,
-      "https://roadside-assistance-api-27dbc3c52c31.herokuapp.com/api/v1/auth/register",
+      "http://localhost:8000/api/auth/register",
       requestData,
       "Account created successfully!"
     );
@@ -125,13 +125,13 @@ if (accountCreationForm) {
 
       handleFormSubmit(
         event,
-        "https://roadside-assistance-api-27dbc3c52c31.herokuapp.com/api/v1/auth/login",
+        "http://localhost:8000/api/auth/login",
         requestData,
         "Login successful! Redirecting..."
       ).then(() => {
-        localStorage.setItem("accessToken", requestData.accessToken);
-        localStorage.setItem("refreshToken", requestData.refreshToken);
-        window.location.href = "/dashboard";
+        console.log(requestData);
+        localStorage.setItem("token", requestData.token);
+        window.location.href = "index.html";
       });
     });
   }
