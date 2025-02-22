@@ -1,0 +1,79 @@
+services:
+  # NOTIFICATION MICROSERVICE
+  # --------------------------------------------------------------
+  mongo:
+    container_name: notification-service-db
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=admin123
+  
+  mongo-express:
+    container_name: mongo-express
+    image: mongo-express
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=mongo
+      - ME_CONFIG_MONGODB_PORT=27017
+      - ME_CONFIG_MONGODB_ENABLE_ADMIN=true
+      - ME_CONFIG_MONGODB_AUTH_DATABASE=admin
+      - ME_CONFIG_MONGODB_AUTH_USERNAME=admin
+      - ME_CONFIG_MONGODB_AUTH_PASSWORD=admin123
+      - ME_CONFIG_BASICAUTH_USERNAME=admin
+      - ME_CONFIG_BASICAUTH_PASSWORD=admin123
+    depends_on:
+      - mongo
+    ports:
+      - "8888:8081"
+
+
+  # REQUEST MICROSERVICE
+  # --------------------------------------------------------------
+  request-service-postgres:
+    container_name: request-service-db
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    volumes:
+      - "./docker-volumes/req-postgres:/var/lib/postgresql/data"
+    environment:
+      - "POSTGRES_USER=admin"
+      - "POSTGRES_PASSWORD=admin"
+   
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - "./docker-volumes/rabbitmq/data/:/var/lib/rabbitmq/"
+      - "./docker-volumes/rabbitmq/log/:/var/log/rabbitmq"
+
+  
+  # SERVICE-DISPATCHER MICROSERVICE
+  # --------------------------------------------------------------
+  service-dispatcher-postgres:
+    container_name: service-dispatcher-db
+    image: postgres:latest
+    ports:
+      - "5431:5432"
+    volumes:
+      - "./docker-volumes/sd-postgres:/var/lib/postgresql/data"
+    environment:
+      - "POSTGRES_USER=admin"
+      - "POSTGRES_PASSWORD=admin"
+
+
+  # COMMON SERVICES
+  # --------------------------------------------------------------
+  postgres_admin_portal:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    ports:
+      - "5050:5050"
+    environment:
+      - "PGADMIN_DEFAULT_EMAIL=admin@gmail.com"
+      - "PGADMIN_DEFAULT_PASSWORD=admin"
+      - "PGADMIN_LISTEN_PORT=5050"
