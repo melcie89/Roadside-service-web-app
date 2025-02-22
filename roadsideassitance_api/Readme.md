@@ -224,3 +224,199 @@ socket.on("location_update", (data) => {
   "timestamp": "Date"
 }
 ```
+
+## Service Endpoints
+
+### Request Service
+
+```http
+POST /api/services/request
+```
+
+**Authorization:** Bearer {token}
+
+**Request Body:**
+
+```json
+{
+  "type": "string",
+  "location": {
+    "latitude": "number",
+    "longitude": "number",
+    "address": "string"
+  },
+  "description": "string"
+}
+```
+
+**Type Options:**
+
+- "TOWING"
+- "REPAIR"
+- "FUEL_DELIVERY"
+- "TIRE_CHANGE"
+- "JUMP_START"
+
+**Response:**
+
+- **Status 201**
+
+```json
+{
+  "message": "Service request created",
+  "service": {
+    "serviceID": "string",
+    "requester": "string",
+    "type": "string",
+    "status": "PENDING",
+    "location": {
+      "latitude": "number",
+      "longitude": "number",
+      "address": "string"
+    },
+    "description": "string",
+    "timestamp": "Date"
+  }
+}
+```
+
+### Accept Service
+
+```http
+POST /api/services/accept/:serviceId
+```
+
+**Authorization:** Bearer {token}
+
+**Response:**
+
+- **Status 200**
+
+```json
+{
+  "message": "Service request accepted",
+  "service": {
+    "serviceID": "string",
+    "requester": "string",
+    "provider": "string",
+    "status": "ACCEPTED",
+    "timestampOfAcceptance": "Date"
+  }
+}
+```
+
+### Update Service Status
+
+```http
+PUT /api/services/:serviceId/status
+```
+
+**Authorization:** Bearer {token}
+
+**Request Body:**
+
+```json
+{
+  "status": "string"
+}
+```
+
+**Status Options:**
+
+- "PENDING"
+- "ACCEPTED"
+- "IN_PROGRESS"
+- "COMPLETED"
+- "CANCELLED"
+
+**Response:**
+
+- **Status 200**
+
+```json
+{
+  "message": "Service status updated",
+  "service": {
+    "serviceID": "string",
+    "status": "string",
+    "completionTime": "Date" // Only when status is COMPLETED
+  }
+}
+```
+
+### Get Service History
+
+```http
+GET /api/services/history
+```
+
+**Authorization:** Bearer {token}
+
+**Response:**
+
+- **Status 200**
+
+```json
+[
+  {
+    "serviceID": "string",
+    "requester": {
+      "id": "string",
+      "firstName": "string",
+      "lastName": "string"
+    },
+    "provider": {
+      "id": "string",
+      "firstName": "string",
+      "lastName": "string"
+    },
+    "type": "string",
+    "status": "string",
+    "location": {
+      "latitude": "number",
+      "longitude": "number",
+      "address": "string"
+    },
+    "description": "string",
+    "timestamp": "Date",
+    "timestampOfAcceptance": "Date",
+    "completionTime": "Date"
+  }
+]
+```
+
+### Service Socket Events
+
+#### Listen for New Service Requests
+
+```javascript
+socket.on("new_service_request", (data) => {
+  // data: {
+  //   serviceID: string,
+  //   location: { latitude: number, longitude: number },
+  //   type: string
+  // }
+});
+```
+
+#### Listen for Service Acceptance
+
+```javascript
+socket.on("service_accepted", (data) => {
+  // data: {
+  //   serviceID: string,
+  //   provider: string
+  // }
+});
+```
+
+#### Listen for Service Status Updates
+
+```javascript
+socket.on("service_status_update", (data) => {
+  // data: {
+  //   serviceID: string,
+  //   status: string
+  // }
+});
+```
