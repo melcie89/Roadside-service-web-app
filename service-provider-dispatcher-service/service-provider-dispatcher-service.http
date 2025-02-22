@@ -1,0 +1,6 @@
+@service_provider_dispatcher_service_HostAddress = http://localhost:5004
+
+GET {{service_provider_dispatcher_service_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
