@@ -3,7 +3,7 @@ using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using service_provider_dispatcher_service.data;
 using service_provider_dispatcher_service.dbcontext;
-using shared.Events;
+using Shared.Events;
 
 namespace service_provider_dispatcher_service.services;
 
@@ -11,9 +11,6 @@ public class ServiceDispatcher(AppDbContext dbContext, IPublishEndpoint publishE
 {
     public async Task AssignServiceProviderAsync(RequestCreated request)
     {
-        Console.WriteLine("=========== A2 ============");
-
-        
         var availableProviders = await dbContext.ServiceProviders.ToListAsync();
 
         if (availableProviders.Count == 0)

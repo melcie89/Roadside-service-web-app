@@ -15,25 +15,22 @@ builder.Services.AddScoped<ServiceDispatcher>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(
-        ""
+        "Host=ep-shrill-night-aadekjpe-pooler.westus3.azure.neon.tech;Username=neondb_owner;Password=npg_YyjVF7wUzl1f;Database=roadside-service-webapp-service-dispatcher-db"
     )
 );
 
 builder.Services.AddMassTransit(config =>
 {
     config.SetKebabCaseEndpointNameFormatter();
+    config.AddConsumers(typeof(Program).Assembly);
     config.UsingRabbitMq((context, cfg) =>
     {
-        cfg.Host(new Uri("rabbitmq://localhost:5672"), h =>
+        cfg.Host(new Uri("amqp://localhost:5672"), h =>
         {
             h.Username("guest");
             h.Password("guest");
         });
-
-        cfg.ReceiveEndpoint(e =>
-        {
-            e.Consumer<ServiceRequestConsumer>(context);
-        });
+        cfg.ConfigureEndpoints(context);
     });
 });
 

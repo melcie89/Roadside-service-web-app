@@ -1,4 +1,4 @@
-namespace shared.Events;
+namespace Shared.Events;
 
 public class ServiceProviderAssigned
 {

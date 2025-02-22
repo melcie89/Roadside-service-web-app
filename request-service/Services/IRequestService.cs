@@ -9,5 +9,5 @@ public interface IRequestService
     Task<Request> CreateRequestAsync(CreateRequestDto request);
     Task<int> DeleteRequestAsync(Guid requestId);
     Task<Request?> UpdateRequestAsync(UpdateRequestDto request);
-    Task<Request?> UpdateRequestStatusAsync(Guid requestId, string status);
+    Task<Request?> UpdateRequestStatusAsync(Guid requestId, Guid serviceProviderId);
 }

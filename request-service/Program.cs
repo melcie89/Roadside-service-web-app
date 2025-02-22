@@ -4,36 +4,30 @@ using Microsoft.EntityFrameworkCore;
 using request_service.consumers;
 using request_service.DbContext;
 using request_service.Models;
-using request_service.Repositories;
 using request_service.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddScoped<IRequestService, RequestService>();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(
-        ""
+        "Host=ep-shrill-night-aadekjpe-pooler.westus3.azure.neon.tech;Username=neondb_owner;Password=npg_YyjVF7wUzl1f;Database=roadside-service-webapp-request-service-db"
     )
 );
-builder.Services.AddScoped<IRequestRepository, RequestRepository>();
-builder.Services.AddScoped<IRequestService, RequestService>();
-
 builder.Services.AddMassTransit(configure =>
 {
     configure.SetKebabCaseEndpointNameFormatter();
+    configure.AddConsumers(typeof(Program).Assembly);
     configure.UsingRabbitMq((context, cfg) =>
     {
-        cfg.Host(new Uri("rabbitmq://localhost:5672"), h =>
+        cfg.Host(new Uri("amqp://localhost:5672"), h =>
         {
             h.Username("guest");
             h.Password("guest");
         });
-        
-        cfg.ReceiveEndpoint(e =>
-        {
-            e.Consumer<AssignmentConsumer>();
-        });
+        cfg.ConfigureEndpoints(context);
     });
 });
 

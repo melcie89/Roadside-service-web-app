@@ -1,32 +1,21 @@
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using request_service.DbContext;
-using request_service.Events;
 using request_service.Models;
-using request_service.Repositories;
-using shared.Events;
+using Shared.Events;
 
 namespace request_service.Services;
 
-public class RequestService : IRequestService
+public class RequestService(IPublishEndpoint publishEndpoint, AppDbContext context) : IRequestService
 {
-    private readonly IRequestRepository _requestRepository;
-    private readonly IPublishEndpoint  _publishEndpoint;
-
-    public RequestService(IRequestRepository requestRepository, IPublishEndpoint publishEndpoint)
-    {
-        _requestRepository = requestRepository;
-        _publishEndpoint = publishEndpoint;
-    }
-
     public async Task<Request?> GetRequestAsync(Guid requestId)
     {
-        return await _requestRepository.GetRequestByIdAsync(requestId);
+        return await context.Requests.FindAsync(requestId);
     }
 
     public async Task<ICollection<Request>?> GetCustomerRequestsAsync(Guid customerId)
     {
-        return await _requestRepository.GetCustomerRequestsAsync(customerId);
+        return await context.Requests.Where(r=> r.CustomerId == customerId).ToListAsync();
     }
 
     public async Task<Request> CreateRequestAsync(CreateRequestDto request)
@@ -46,59 +35,57 @@ public class RequestService : IRequestService
             Description = request.Description
         };
         
-        var createdRequest = await _requestRepository.CreateRequestAsync(r);
-
-        await _publishEndpoint.Publish(new RequestCreated(
-                                                createdRequest.Id, 
-                                                createdRequest.CustomerId, 
-                                                createdRequest.CustomerLatitude, 
-                                                createdRequest.CustomerLongitude, 
-                                                createdRequest.ServiceType));
+        context.Requests.Add(r);
         
-        return createdRequest;
+        await context.SaveChangesAsync();
+
+        await publishEndpoint.Publish(new RequestCreated
+        {
+            Id = Guid.NewGuid(),
+            RequestId = r.Id, 
+            ClientId = r.CustomerId, 
+            Latitude = r.CustomerLatitude, 
+            Longitude = r.CustomerLongitude, 
+            ServiceType = r.ServiceType
+        });
+        
+        return r;
     }
 
     public async Task<int> DeleteRequestAsync(Guid requestId)
     {
-        int deletedCount = await _requestRepository.DeleteRequestAsync(requestId);
-        
-        await _publishEndpoint.Publish(new RequestDeleted(requestId));
-        
-        return deletedCount;
+        return await context.Requests.Where(r => r.Id == requestId).ExecuteDeleteAsync();
     }
 
     public async Task<Request?> UpdateRequestAsync(UpdateRequestDto request)
     {
-        Request? updatedRequest = await _requestRepository.UpdateRequestAsync(request);
+        var existingRequest = await context.Requests.FindAsync(request.Id);
 
-        if (updatedRequest != null)
-        {
-            await _publishEndpoint.Publish(new RequestUpdated(updatedRequest.Id));
-        }
+        if (existingRequest == null) return null;
         
-        return updatedRequest;
+        existingRequest.ServiceType = request.ServiceType;
+        existingRequest.CustomerLatitude = request.CustomerLatitude;
+        existingRequest.CustomerLongitude = request.CustomerLongitude;
+        existingRequest.Description = request.Description;
+        existingRequest.UpdatedAt = DateTime.UtcNow;
+        existingRequest.Status = request.Status;
+
+        await context.SaveChangesAsync();
+        
+        return existingRequest;
     }
-    
-    public async Task<Request?> UpdateRequestStatusAsync(Guid requestId, string status)
+
+    public async Task<Request?> UpdateRequestStatusAsync(Guid requestId, Guid serviceProviderId)
     {
-        Request? req = await _requestRepository.GetRequestByIdAsync(requestId);
-
-        if (req == null) return null;
+        var existingRequest = await context.Requests.FindAsync(requestId);
         
-        var updated = new UpdateRequestDto()
-        {
-            Id = req.Id,
-            CustomerId = req.CustomerId,
-            ServiceType = req.ServiceType,
-            CustomerLatitude = req.CustomerLatitude,
-            CustomerLongitude = req.CustomerLongitude,
-            Description = req.Description,
-            Status = status
-        };
-            
-        req.Status = status;
-        await _requestRepository.UpdateRequestAsync(updated);
+        if (existingRequest == null) return null;
 
-        return req;
+        existingRequest.Status = "Assigned";
+        existingRequest.ServiceProviderId = serviceProviderId;
+        
+        await context.SaveChangesAsync();
+        
+        return existingRequest;
     }
 }
