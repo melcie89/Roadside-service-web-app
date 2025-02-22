@@ -1,0 +1,36 @@
+name: Build Request Service
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+        
+    - name: Restore dependencies
+      run: dotnet restore
+      working-directory: ./request-service
+      
+    - name: Build
+      run: dotnet build --no-restore
+      working-directory: ./request-service
+      
+    - name: Test
+      run: dotnet test --no-build --verbosity normal
+      working-directory: ./request-service
+
+    - name: Build Docker Image
+      env:
+        IMAGE_TAG: ${{github.sha}}
+      run: |
+        cd ./request-service  # Hardcoded Dockerfile directory
+        docker build -t local-image:request-service .
