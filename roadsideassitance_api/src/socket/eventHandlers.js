@@ -1,5 +1,6 @@
 const Location = require("../models/Location");
 const ChatMessage = require("../models/ChatMessage");
+const Service = require("../../models/Service");
 
 const handleReadMessage = async (socket, { messageId, roomId }) => {
   const userId = socket.user.userId;
@@ -32,7 +33,41 @@ const handleShareLocation = async (socket, { roomId, latitude, longitude }) => {
   }
 };
 
+//updated event to handle request for service
+const handleServiceRequest = (socket) => async (data) => {
+  try {
+    const { serviceID, location, type } = data;
+
+    // Broadcast to nearby service providers
+    socket.broadcast.emit("new_service_request", {
+      serviceID,
+      location,
+      type,
+    });
+  } catch (error) {
+    console.error("Error handling service request:", error);
+  }
+};
+
+const handleServiceAcceptance = (socket) => async (data) => {
+  try {
+    const { serviceID, providerID } = data;
+    const service = await Service.findOne({ serviceID });
+
+    if (service) {
+      socket.to(service.requester.toString()).emit("service_accepted", {
+        serviceID,
+        providerID,
+      });
+    }
+  } catch (error) {
+    console.error("Error handling service acceptance:", error);
+  }
+};
+
 module.exports = {
   handleReadMessage,
   handleShareLocation,
+  handleServiceRequest,
+  handleServiceAcceptance,
 };

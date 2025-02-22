@@ -11,6 +11,7 @@ const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const locationRoutes = require("./routes/LocationRoutes");
 const chatRoutes = require("./routes/chatRoutes");
+const serviceRoutes = require("./routes/serviceRoutes");
 
 const app = express();
 const server = http.createServer(app);
@@ -30,6 +31,8 @@ app.use("/api/chat", chatRoutes);
 app.use("/api/location", locationRoutes);
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/users", userRoutes);
+//new route to allow service requests
+app.use("/api/services", serviceRoutes);
 
 // Initialize Socket Service
 new SocketService(io);
