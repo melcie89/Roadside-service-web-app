@@ -1,4 +1,4 @@
-name: Build Request Service
+name: Build Service Provider Service
 
 on:
   workflow_dispatch:
