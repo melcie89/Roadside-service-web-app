@@ -40,6 +40,7 @@ public class ServiceDispatcher(AppDbContext dbContext, IPublishEndpoint publishE
 
             await publishEndpoint.Publish(new ServiceProviderAssigned()
             {
+                ClientId = request.ClientId,
                 RequesterId = assignment.RequestId,
                 ServiceProviderId = assignment.ServiceProviderId,
             });

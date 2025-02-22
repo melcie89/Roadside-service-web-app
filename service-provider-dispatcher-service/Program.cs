@@ -15,7 +15,7 @@ builder.Services.AddScoped<ServiceDispatcher>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(
-        "Host=ep-shrill-night-aadekjpe-pooler.westus3.azure.neon.tech;Username=neondb_owner;Password=npg_YyjVF7wUzl1f;Database=roadside-service-webapp-service-dispatcher-db"
+        "Host=localhost;Port=5431;Username=admin;Password=admin;Database=service-dispatcher-db"
     )
 );
 
@@ -34,8 +34,19 @@ builder.Services.AddMassTransit(config =>
     });
 });
 
-
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    var pendingMigrations = dbContext.Database.GetPendingMigrations();
+    if (pendingMigrations.Any())
+    {
+        Console.WriteLine("Applying pending migrations...");
+        dbContext.Database.Migrate();
+        Console.WriteLine("Migrations applied successfully.");
+    }
+}
 
 if (app.Environment.IsDevelopment())
 {
