@@ -1,31 +1,14 @@
 services:
   # NOTIFICATION MICROSERVICE
   # --------------------------------------------------------------
-  # mongo:
-  #   container_name: notification-service-db
-  #   image: mongo:latest
-  #   ports:
-  #     - "27017:27017"
-  #   environment:
-  #     - MONGO_INITDB_ROOT_USERNAME=admin
-  #     - MONGO_INITDB_ROOT_PASSWORD=admin123
-  
-  # mongo-express:
-  #   container_name: mongo-express
-  #   image: mongo-express
-  #   environment:
-  #     - ME_CONFIG_MONGODB_SERVER=mongo
-  #     - ME_CONFIG_MONGODB_PORT=27017
-  #     - ME_CONFIG_MONGODB_ENABLE_ADMIN=true
-  #     - ME_CONFIG_MONGODB_AUTH_DATABASE=admin
-  #     - ME_CONFIG_MONGODB_AUTH_USERNAME=admin
-  #     - ME_CONFIG_MONGODB_AUTH_PASSWORD=admin123
-  #     - ME_CONFIG_BASICAUTH_USERNAME=admin
-  #     - ME_CONFIG_BASICAUTH_PASSWORD=admin123
-  #   depends_on:
-  #     - mongo
-  #   ports:
-  #     - "8888:8081"
+  notification-service:
+    container_name: notification-service
+    build: ./notification-service
+    ports:
+      - "8070:8080"
+    depends_on:
+      - notification-service-postgres
+      - rabbitmq
 
   notification-service-postgres:
     container_name: notificatoin-service-db
@@ -41,6 +24,15 @@ services:
 
   # REQUEST MICROSERVICE
   # --------------------------------------------------------------
+  request-service:
+    container_name: request-service
+    build: ./request-service
+    ports:
+      - "8071:8080"
+    depends_on:
+      - request-service-postgres
+      - rabbitmq
+
   request-service-postgres:
     container_name: request-service-db
     image: postgres:latest
@@ -65,6 +57,15 @@ services:
   
   # SERVICE-DISPATCHER MICROSERVICE
   # --------------------------------------------------------------
+  service-dispatcher-service:
+    container_name: service-dispatcher-service
+    build: ./service-provider-dispatcher-service
+    ports:
+      - "8072:8080"
+    depends_on:
+      - service-dispatcher-postgres
+      - rabbitmq
+
   service-dispatcher-postgres:
     container_name: service-dispatcher-db
     image: postgres:latest
