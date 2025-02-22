@@ -15,7 +15,7 @@ builder.Services.AddScoped<ServiceDispatcher>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(
-        "Host=ep-shrill-night-aadekjpe-pooler.westus3.azure.neon.tech;Username=neondb_owner;Password=npg_YyjVF7wUzl1f;Database=roadside-service-webapp-service-dispatcher-db"
+        ""
     )
 );
 

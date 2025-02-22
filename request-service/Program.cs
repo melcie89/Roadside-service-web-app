@@ -13,7 +13,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(
-        "Host=ep-shrill-night-aadekjpe-pooler.westus3.azure.neon.tech;Username=neondb_owner;Password=npg_YyjVF7wUzl1f;Database=roadside-service-webapp-request-service-db"
+        ""
     )
 );
 builder.Services.AddScoped<IRequestRepository, RequestRepository>();
