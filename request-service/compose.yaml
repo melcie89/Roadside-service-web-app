@@ -1,6 +1,6 @@
 ﻿services:
   postgres:
-    image: "postgres:latest"
+    image: postgres:latest
     ports:
       - "5432:5432"
     volumes:
@@ -10,10 +10,19 @@
       - "POSTGRES_PASSWORD=admin"
    
   postgres_admin_portal:
-    image: "dpage/pgadmin4"
+    image: dpage/pgadmin4
     ports:
       - "5050:5050"
     environment:
       - "PGADMIN_DEFAULT_EMAIL=admin@gmail.com"
       - "PGADMIN_DEFAULT_PASSWORD=admin"
       - "PGADMIN_LISTEN_PORT=5050"
+  
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - "./docker-volumes/rabbitmq/data/:/var/lib/rabbitmq/"
+      - "./docker-volumes/rabbitmq/log/:/var/log/rabbitmq"

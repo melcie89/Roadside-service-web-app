@@ -1,5 +1,7 @@
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using request_service.DbContext;
+using request_service.Events;
 using request_service.Models;
 using request_service.Repositories;
 
@@ -8,10 +10,12 @@ namespace request_service.Services;
 public class RequestService : IRequestService
 {
     private readonly IRequestRepository _requestRepository;
+    private readonly IPublishEndpoint  _publishEndpoint;
 
-    public RequestService(IRequestRepository requestRepository)
+    public RequestService(IRequestRepository requestRepository, IPublishEndpoint publishEndpoint)
     {
         _requestRepository = requestRepository;
+        _publishEndpoint = publishEndpoint;
     }
 
     public async Task<Request?> GetRequestAsync(Guid requestId)
@@ -43,18 +47,29 @@ public class RequestService : IRequestService
         
         var createdRequest = await _requestRepository.CreateRequestAsync(r);
 
-        // Publish to message broker
+        await _publishEndpoint.Publish(new RequestCreated(createdRequest.Id));
         
         return createdRequest;
     }
 
     public async Task<int> DeleteRequestAsync(Guid requestId)
     {
-        return await _requestRepository.DeleteRequestAsync(requestId);
+        int deletedCount = await _requestRepository.DeleteRequestAsync(requestId);
+        
+        await _publishEndpoint.Publish(new RequestDeleted(requestId));
+        
+        return deletedCount;
     }
 
     public async Task<Request?> UpdateRequestAsync(UpdateRequestDto request)
     {
-        return await _requestRepository.UpdateRequestAsync(request);
+        Request? updatedRequest = await _requestRepository.UpdateRequestAsync(request);
+
+        if (updatedRequest != null)
+        {
+            await _publishEndpoint.Publish(new RequestUpdated(updatedRequest.Id));
+        }
+        
+        return updatedRequest;
     }
 }

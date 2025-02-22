@@ -1,3 +1,4 @@
+using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using request_service.DbContext;
@@ -11,11 +12,24 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(
-        "Host=localhost;Username=admin;Password=admin;Database=requestdb"
+        "Host=ep-shrill-night-aadekjpe-pooler.westus3.azure.neon.tech;Username=neondb_owner;Password=npg_YyjVF7wUzl1f;Database=roadside-service-webapp-request-service-db"
     )
 );
 builder.Services.AddScoped<IRequestRepository, RequestRepository>();
 builder.Services.AddScoped<IRequestService, RequestService>();
+
+builder.Services.AddMassTransit(configure =>
+{
+    configure.SetKebabCaseEndpointNameFormatter();
+    configure.UsingRabbitMq((context, cfg) =>
+    {
+        cfg.Host(new Uri("rabbitmq://localhost:5672"), h =>
+        {
+            h.Username("guest");
+            h.Password("guest");
+        });
+    });
+});
 
 var app = builder.Build();
 
