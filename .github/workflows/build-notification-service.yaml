@@ -18,19 +18,19 @@ jobs:
         
     - name: Restore dependencies
       run: dotnet restore
-      working-directory: ./service-provider-dispatcher-service
+      working-directory: ./request-service
       
     - name: Build
       run: dotnet build --no-restore
-      working-directory: ./service-provider-dispatcher-service
+      working-directory: ./request-service
       
     - name: Test
       run: dotnet test --no-build --verbosity normal
-      working-directory: ./service-provider-dispatcher-service
+      working-directory: ./request-service
 
     - name: Build Docker Image
       env:
         IMAGE_TAG: ${{github.sha}}
       run: |
-        cd ./service-provider-dispatcher-service  # Hardcoded Dockerfile directory
-        docker build -t local-image:service-provider-dispatcher-service .
+        cd ./request-service  # Hardcoded Dockerfile directory
+        docker build -t local-image:request-service .
