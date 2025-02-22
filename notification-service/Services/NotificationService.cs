@@ -7,16 +7,15 @@ namespace notification_service.Services;
 public class NotificationService : INotificationService
     {
         private readonly INotificationRepository _repository;
-        private readonly INotificationSender _sender;
+        //private readonly INotificationSender _sender;
         private readonly ILogger<NotificationService> _logger;
 
         public NotificationService(
             INotificationRepository repository,
-            INotificationSender sender,
             ILogger<NotificationService> logger)
         {
             _repository = repository;
-            _sender = sender;
+            //_sender = sender;
             _logger = logger;
         }
 
@@ -40,6 +39,7 @@ public class NotificationService : INotificationService
                 var created = await _repository.CreateAsync(notification);
                 
                 // Send push notification
+                /*
                 try
                 {
                     await _sender.SendPushNotificationAsync(created);
@@ -53,6 +53,7 @@ public class NotificationService : INotificationService
                     created.Status = NotificationStatus.Failed;
                     await _repository.UpdateAsync(created);
                 }
+                */
 
                 return MapToResponseDto(created);
             }

@@ -4,6 +4,7 @@ using request_service.DbContext;
 using request_service.Events;
 using request_service.Models;
 using request_service.Repositories;
+using shared.Events;
 
 namespace request_service.Services;
 
@@ -47,7 +48,12 @@ public class RequestService : IRequestService
         
         var createdRequest = await _requestRepository.CreateRequestAsync(r);
 
-        await _publishEndpoint.Publish(new RequestCreated(createdRequest.Id));
+        await _publishEndpoint.Publish(new RequestCreated(
+                                                createdRequest.Id, 
+                                                createdRequest.CustomerId, 
+                                                createdRequest.CustomerLatitude, 
+                                                createdRequest.CustomerLongitude, 
+                                                createdRequest.ServiceType));
         
         return createdRequest;
     }
@@ -71,5 +77,28 @@ public class RequestService : IRequestService
         }
         
         return updatedRequest;
+    }
+    
+    public async Task<Request?> UpdateRequestStatusAsync(Guid requestId, string status)
+    {
+        Request? req = await _requestRepository.GetRequestByIdAsync(requestId);
+
+        if (req == null) return null;
+        
+        var updated = new UpdateRequestDto()
+        {
+            Id = req.Id,
+            CustomerId = req.CustomerId,
+            ServiceType = req.ServiceType,
+            CustomerLatitude = req.CustomerLatitude,
+            CustomerLongitude = req.CustomerLongitude,
+            Description = req.Description,
+            Status = status
+        };
+            
+        req.Status = status;
+        await _requestRepository.UpdateRequestAsync(updated);
+
+        return req;
     }
 }

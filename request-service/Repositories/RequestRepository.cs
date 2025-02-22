@@ -50,7 +50,8 @@ public class RequestRepository : IRequestRepository
         existingRequest.CustomerLatitude = request.CustomerLatitude;
         existingRequest.CustomerLongitude = request.CustomerLongitude;
         existingRequest.Description = request.Description;
-        existingRequest.UpdatedAt = DateTime.UtcNow; 
+        existingRequest.UpdatedAt = DateTime.UtcNow;
+        existingRequest.Status = request.Status;
 
         await _context.SaveChangesAsync();
 

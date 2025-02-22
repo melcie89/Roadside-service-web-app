@@ -1,6 +1,7 @@
 using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using request_service.consumers;
 using request_service.DbContext;
 using request_service.Models;
 using request_service.Repositories;
@@ -28,6 +29,11 @@ builder.Services.AddMassTransit(configure =>
             h.Username("guest");
             h.Password("guest");
         });
+        
+        cfg.ReceiveEndpoint(e =>
+        {
+            e.Consumer<AssignmentConsumer>();
+        });
     });
 });
 
@@ -35,7 +41,7 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
+    app.UseSwagger();   
     app.UseSwaggerUI();
 }
 
