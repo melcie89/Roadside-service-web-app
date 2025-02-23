@@ -1,26 +1,40 @@
+
 const express = require('express');
 const app = express();
 require('dotenv').config(); // Load environment variables
 const mongoose = require('mongoose');
+const cors = require('cors');
 
 // Middleware
-// app.use(cors());
+const allowedOrigins = ['http://localhost:5173']; // Allow requests from this frontend URL
+
+const options = {
+  origin: function (origin, callback) {
+    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,  // Allow credentials (cookies, tokens, etc.)
+};
+
+app.use(cors(options));
 app.use(express.json());
 
 // Connect to MongoDB
 const connect = async () => {
-    try {
-        await mongoose.connect(process.env.MONGO);
-        console.log("Connected to mongoDB.");
-    } catch (error) {
-        throw error;
-    }
+  try {
+    await mongoose.connect(process.env.MONGO);
+    console.log('Connected to mongoDB.');
+  } catch (error) {
+    throw error;
+  }
 };
 
-mongoose.connection.on("disconnected", () => {
-    console.log('mongoDB disconnected!');
-})
-
+mongoose.connection.on('disconnected', () => {
+  console.log('MongoDB disconnected!');
+});
 
 // Route Files
 const authRoutes = require('./src/routes/authRoutes.js');
@@ -38,6 +52,6 @@ app.use('/api/admin', adminRoutes);
 
 // Server
 app.listen(8000, () => {
-    connect();
-    console.log('backend is running.')
-})
+  connect();
+  console.log('Backend is running on http://localhost:8000');
+});
