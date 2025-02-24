@@ -1,6 +1,6 @@
 services:
   # NOTIFICATION MICROSERVICE
-  # --------------------------------------------------------------
+  # -------------------------------------------------------------
   notification-service:
     container_name: notification-service
     image: safaalaloosi/notification-service:latest
