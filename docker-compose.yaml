@@ -24,7 +24,7 @@ services:
 
 
   # REQUEST MICROSERVICE
-  # --------------------------------------------------------------
+  # -------------------------------------------------------------
   request-service:
     container_name: request-service
     image: safaalaloosi/request-service:latest
