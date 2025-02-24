@@ -58,7 +58,7 @@ services:
 
   
   # SERVICE-DISPATCHER MICROSERVICE
-  # --------------------------------------------------------------
+  # -------------------------------------------------------------
   service-dispatcher-service:
     container_name: service-dispatcher-service
     image: safaalaloosi/service-provider-dispatcher-service:latest
